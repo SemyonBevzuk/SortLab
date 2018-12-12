@@ -1,4 +1,3 @@
-import argparse
 import csv
 import glob
 import os
@@ -45,25 +44,25 @@ def plot_sorts(stats, csv_folder, filename_path):
     for type_element in types:
         ax = plt.subplot(2, 2, plot_count)
         #ax.set_xscale('log')
-        add_lines(stats, type_element)
+        for i in stats:
+            add_lines(i, type_element)
         plt.legend()
         plt.xlabel('Size') 
         plt.ylabel('Time, s') 
-        plt.title('' + csv_folder + 'Sorts ' + type_element)
+        plt.title('Sorts ' + type_element)
         plt.grid(True)
         plot_count += 1
     plt.savefig(filename_path, dpi=300)
     plt.show()
     
-def main(args):
-    csv_folder = args.stats_folder
-    filename = "Optimal_" + csv_folder + ".png"
-    filename_path = os.path.join(csv_folder, filename)
-    stats = GetAllStats(csv_folder)
-    plot_sorts(stats, csv_folder, filename_path)
+def main():
+    csv_folders = ['BucketInsertion','BucketStandart','BucketInsertionSortAdaptiv']
+    filename = "Optimal.png"
+    filename_path = filename
+    stats = []
+    for folder in csv_folders:
+    	stats.append(GetAllStats(folder))
+    plot_sorts(stats, csv_folders, filename_path)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('stats_folder', type=str)
-
-    main(parser.parse_args())
+    main()

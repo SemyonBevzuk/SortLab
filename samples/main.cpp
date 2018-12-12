@@ -133,19 +133,30 @@ int main(int argc, char** argv) {
         BucketInsertionSort<double> sort4(numBucket);
         GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
     }
+    if (sortName == "BucketInsertionSortAdaptiv")
+    {
+        BucketInsertionAdaptiv<__int32> sort1;
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        BucketInsertionAdaptiv<__int64> sort2;
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        BucketInsertionAdaptiv<float> sort3;
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        BucketInsertionAdaptiv<double> sort4;
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+    }
     myfile.close();
     return 0;
 }
 
 void InitParser(cmdline::parser& parser) {
     parser.add<string>("outFile", 'f', "Name of the output csv file", false, "test");
-    parser.add<string>("sortName", 's', "Name of the sort", false, "QuickLomuto");
+    parser.add<string>("sortName", 's', "Name of the sort", false, "BucketStandart");
     parser.add<unsigned int>("sizeArray", 'n', "Size of the sort array", false, 10);
     parser.add<unsigned int>("kMerge", 'k', "k-Merge in MergeSort ", false, 5);
     parser.add<unsigned int>("dHeap", 'd', "d-heap in HeapSort", false, 3);
-    parser.add<unsigned int>("numBucket", 'b', "Number of bucket in BucketSort", false, 10);
+    parser.add<unsigned int>("numBucket", 'b', "Number of bucket in BucketSort", false, 100000);
     parser.add<double>("lb", 'l', "Left border", false, 0);
-    parser.add<double>("rb", 'r', "Right border", false, 10);
+    parser.add<double>("rb", 'r', "Right border", false, 100000);
 }
 
 template <typename Type>
@@ -165,7 +176,8 @@ void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>
     if (std::is_same<Type, __int64>::value) array_type = "int64";
     if (std::is_same<Type, double>::value) array_type = "double";
     if (std::is_same<Type, float>::value) array_type = "float";
-    cout << "Type = " << array_type << endl << endl;
+    cout << "Type = " << array_type << endl;
+    cout << "Size = " << size << endl << endl;
 
     file << sortMethod.GetSortName() << "," << array_type << "," << IsVectorsEqual(array, sort_array) << "," << size << "," << sortMethod.GetSortTime() << "\n";
 }

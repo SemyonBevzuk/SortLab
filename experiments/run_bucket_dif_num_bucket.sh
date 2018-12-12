@@ -5,11 +5,11 @@ right=1000000
 
 rm BucketStandart/*.csv
 rm BucketInsertion/*.csv
-for n in "${nParams[@]}"
+for s in "${size[@]}"
 do
-	for s in "${size[@]}"
+	for n in "${nParams[@]}"
 	do
 		../bin/sample_lab -f ../experiments/BucketStandart/test_"$n" -s BucketStandart -n $s -l $left -r $right -b $n
 		../bin/sample_lab -f ../experiments/BucketInsertion/test_"$n" -s BucketInsertion -n $s -l $left -r $right -b $n
-	done 
+	done
 done 

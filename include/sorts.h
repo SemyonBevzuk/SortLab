@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// O(n^2)
 template <typename Type>
 class BubbleSort : public ISort<Type> {
 public:
@@ -33,6 +34,7 @@ public:
     }
 };
 
+// O(n*log(n)) в среднем
 template <typename Type>
 class StandartSort : public ISort<Type>{
 public:
@@ -49,6 +51,7 @@ public:
     }
 };
 
+// O(n*log(n)) всегда, память O(n) дополнительно
 template <typename Type>
 class MergeSort : public ISort<Type> {
 private:
@@ -108,7 +111,6 @@ public:
     string GetSortName() { return "Merge_" + to_string(k); };
 
     vector<Type> Sort(const vector<Type>& array_t) {
-
         double start_time = omp_get_wtime();
         vector<Type> array_out = array_t; // требует доп память 
         Merge_Sort(array_out, 0, array_out.size() - 1);
@@ -118,8 +120,9 @@ public:
     }
 };
 
+// O(n*log(n)) в среднем, неустойчивая
 template <typename Type>
-class QuickSort : public ISort<Type> { // c хвостом
+class QuickSort : public ISort<Type> {
 private:
     std::mt19937 gen;
 
@@ -178,8 +181,9 @@ public:
     }
 };
 
+// O(n*log(n)) в среднем, неустойчивая
 template <typename Type>
-class QuickSortLomuto : public ISort<Type> { // c хвостом
+class QuickSortLomuto : public ISort<Type> {
 private:
     std::mt19937 gen;
 
@@ -232,6 +236,7 @@ public:
     }
 };
 
+// O(n*log(n)) в среднем - вставка n элементов за log, доп память на структуру
 template <typename Type>
 class SearchTreeSort : public ISort<Type> {
 public:
@@ -254,6 +259,7 @@ public:
     }
 };
 
+// O(n(log(n)) в среднем, неустойчивая
 template <typename Type>
 class HeapSort : public ISort<Type> {
 private:
@@ -323,6 +329,7 @@ public:
     }
 };
 
+// O(n) - линейная в среднем при n ~ k
 template <typename Type>
 class BucketStandartSort : public ISort<Type> {
 private:
@@ -340,7 +347,7 @@ private:
         Type range = maxElement - minElement;
         vector<vector<Type>> buckets(numBuckets, vector<Type>());
         for (unsigned int i = 0; i < a.size(); i++) {
-            unsigned int index = floor(numBuckets*(a[i] - minElement) / (range+1.));
+            unsigned int index = floor(((a[i] - minElement) / (range + 1.))*numBuckets);
             buckets[index].push_back(a[i]);
         }
         for (unsigned int i = 0; i < buckets.size(); i++) {
@@ -372,30 +379,11 @@ public:
     }
 };
 
+// O(n) - линейная в среднем при n ~ k
 template <typename Type>
 class BucketInsertionSort : public ISort<Type>  {
 private:
     unsigned int numBuckets;
-
-    template <typename Type>
-    void InsertionSort(vector<Type>& a) {
-        Type value;
-        unsigned int n = a.size();
-        for (unsigned int k = 0; k < n; k++) {
-            value = a[k];
-            for (unsigned int i = 0; i < k; i++) {
-                if (a[i] < value)
-                    continue;
-                else {
-                    for (unsigned int j = k; j > i; j--) {
-                        a[j] = a[j - 1];
-                    }
-                    a[i] = value;
-                    break;
-                }
-            }
-        }
-    }
 
     template <typename Type>
     void Insertion_sort(vector<Type>& a) {
@@ -423,7 +411,7 @@ private:
         Type range = maxElement - minElement;
         vector<vector<Type>> buckets(numBuckets, vector<Type>());
         for (unsigned int i = 0; i < a.size(); i++) {
-            unsigned int index = floor(numBuckets*(a[i] - minElement) / (range + 1.));
+            unsigned int index = floor(((a[i] - minElement) / (range + 1.))*numBuckets);
             buckets[index].push_back(a[i]);
         }
         for (unsigned int i = 0; i < buckets.size(); i++) {
@@ -443,6 +431,68 @@ public:
     BucketInsertionSort(unsigned int _numBuckets = 10) {
         numBuckets = _numBuckets;
     }
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out;
+
+        double start_time = omp_get_wtime();
+        array_out = BucketSort(array_t);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
+// O(n) - линейная в среднем при n ~ k
+template <typename Type>
+class BucketInsertionAdaptiv : public ISort<Type> {
+private:
+    unsigned int numBuckets;
+
+    template <typename Type>
+    void Insertion_sort(vector<Type>& a) {
+        unsigned int n = a.size();
+        for (int i = 1; i<n; i++) {
+            Type key = a[i];
+            int j = i - 1;
+            while (j >= 0 && a[j]>key) {
+                a[j + 1] = a[j];
+                j--;
+            }
+            a[j + 1] = key;
+        }
+    }
+
+    template <typename Type>
+    vector<Type> BucketSort(const vector<Type>& a) {
+        numBuckets = a.size();
+        vector<Type> res;
+        Type minElement = a[0];
+        Type maxElement = a[0];
+        for (unsigned int i = 0; i < a.size(); i++) {
+            minElement = min(minElement, a[i]);
+            maxElement = max(maxElement, a[i]);
+        }
+        Type range = maxElement - minElement;
+        vector<vector<Type>> buckets(numBuckets, vector<Type>());
+        for (unsigned int i = 0; i < a.size(); i++) {
+            unsigned int index = floor(((a[i] - minElement) / (range + 1.))*numBuckets);
+            buckets[index].push_back(a[i]);
+        }
+        for (unsigned int i = 0; i < buckets.size(); i++) {
+            Insertion_sort(buckets[i]);
+            //sort(buckets[i].begin(), buckets[i].end());
+        }
+        for (unsigned int i = 0; i < buckets.size(); i++) {
+            for (unsigned int j = 0; j < buckets[i].size(); j++) {
+                res.push_back(buckets[i][j]);
+            }
+        }
+        return res;
+    }
+
+public:
+    string GetSortName() { return "BucketInsertionAdaptiv"; };
 
     vector<Type> Sort(const vector<Type>& array_t) {
         vector<Type> array_out;
