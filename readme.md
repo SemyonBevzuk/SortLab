@@ -19,15 +19,15 @@
 - QuickSort с разбиением Ломуто и устранением хвостовой рекурсии
 - SearchTreeSort на основе multiset
 - d-HeapSort
-- BucketStandartSort 
-- BucketInsertionSort
+- BucketStandartSort с указанием числа карманов
+- BucketInsertionSort с указанием числа карманов
 - BucketInsertionAdaptivSort
 
 # Реализованные генераторы в generator.h
-- Генератор чисел *int32* в диапозоне от *a* до *b*
-- Генератор чисел *int64* в диапозоне от *a* до *b*
-- Генератор чисел *double* в диапозоне от *a* до *b*
-- Генератор чисел *float* в диапозоне от *a* до *b*
+- Генератор чисел *int32* в диапазоне от *a* до *b*
+- Генератор чисел *int64* в диапазоне от *a* до *b*
+- Генератор чисел *double* в диапазоне от *a* до *b*
+- Генератор чисел *float* в диапазоне от *a* до *b*
 
 # Аргументы sample_lab
 - *-f* - имя файла .csv со статистикой
