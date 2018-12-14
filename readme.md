@@ -22,6 +22,7 @@
 - BucketStandartSort с указанием числа карманов
 - BucketInsertionSort с указанием числа карманов
 - BucketInsertionAdaptivSort
+- CountingSort только для int32 и int64
 
 # Реализованные генераторы в generator.h
 - Генератор чисел *int32* в диапазоне от *a* до *b*
@@ -42,4 +43,4 @@
 # Описание скиптов в *experiments*
 - *plot_all_sorts.py* - строит общий график по всем сортировкам
 - *plot_method_with_dif_types.py* - строит график для конкретной сортировки, её нужно указать в качестве параметра, для разных типов данных
-- *plot_tmp.py* - строит график для сравнения BucketStandartSort, BucketInsertionSort, BucketInsertionAdaptivSort
+- *plot_buckets.py* - строит график для сравнения BucketStandartSort, BucketInsertionSort, BucketInsertionAdaptivSort

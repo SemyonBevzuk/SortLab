@@ -11,6 +11,7 @@ rm Quick/run.csv
 rm QuickLomuto/run.csv
 #rm SearchTree/run.csv
 rm Standart/run.csv
+rm Counting/run.csv
 
 for s in "${size[@]}"
 do
@@ -23,4 +24,5 @@ do
 	../bin/sample_lab -f ../experiments/QuickLomuto/run -s QuickLomuto -n $s -l $left -r $right
 	#../bin/sample_lab -f ../experiments/SearchTree/run -s SearchTree -n $s -l $left -r $right
 	../bin/sample_lab -f ../experiments/Standart/run -s Standart -n $s -l $left -r $right
+	../bin/sample_lab -f ../experiments/Counting/run -s Counting -n $s -l $left -r $right
 done 

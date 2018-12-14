@@ -329,7 +329,7 @@ public:
     }
 };
 
-// O(n) - линейная в среднем при n ~ k
+//  O(n*log_k(n))
 template <typename Type>
 class BucketStandartSort : public ISort<Type> {
 private:
@@ -379,7 +379,7 @@ public:
     }
 };
 
-// O(n) - линейная в среднем при n ~ k
+// O(n*log_k(n))
 template <typename Type>
 class BucketInsertionSort : public ISort<Type>  {
 private:
@@ -443,9 +443,9 @@ public:
     }
 };
 
-// O(n) - линейная в среднем при n ~ k
+// O(n*log_k(n))
 template <typename Type>
-class BucketInsertionAdaptiv : public ISort<Type> {
+class BucketInsertionAdaptivSort : public ISort<Type> {
 private:
     unsigned int numBuckets;
 
@@ -499,6 +499,54 @@ public:
 
         double start_time = omp_get_wtime();
         array_out = BucketSort(array_t);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
+// O(n + k)
+template <typename Type>
+class CountingSort : public ISort<Type> {
+private:
+
+    template <typename Type>
+    vector<Type> CountSort(const vector<Type>& a) {
+        vector<Type> res;
+        Type minElement = a[0];
+        Type maxElement = a[0];
+        for (unsigned int i = 0; i < a.size(); i++) {
+            minElement = min(minElement, a[i]);
+            maxElement = max(maxElement, a[i]);
+        }
+        Type range = maxElement - minElement + 1;
+        vector<int> number_index(range);
+
+        int shift = 0;
+        if (minElement > 0) shift = -minElement;
+        else shift = minElement;
+
+        for (int i = 0; i < a.size(); i++) {
+            int index = a[i] + shift;
+            number_index[index]++;
+        }
+
+        for (int i = 0; i < number_index.size(); i++) {
+            for (int j = 0; j < number_index[i]; j++) {
+                res.push_back(minElement + i);
+            }
+        }
+        return res;
+    }
+
+public:
+    string GetSortName() { return "Counting"; };
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out;
+
+        double start_time = omp_get_wtime();
+        array_out = CountSort(array_t);
         sort_time = omp_get_wtime() - start_time;
 
         return array_out;

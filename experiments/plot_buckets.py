@@ -57,7 +57,7 @@ def plot_sorts(stats, csv_folder, filename_path):
     
 def main():
     csv_folders = ['BucketInsertion','BucketStandart','BucketInsertionSortAdaptiv']
-    filename = "Optimal.png"
+    filename = "OptimalBucket.png"
     filename_path = filename
     stats = []
     for folder in csv_folders:
