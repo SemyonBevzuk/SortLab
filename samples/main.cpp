@@ -187,20 +187,20 @@ int main(int argc, char** argv) {
 
 void InitParser(cmdline::parser& parser) {
     parser.add<string>("outFile", 'f', "Name of the output csv file", false, "test");
-    parser.add<string>("sortName", 's', "Name of the sort", false, "Merge");
-    parser.add<unsigned int>("sizeArray", 'n', "Size of the sort array", false, 10);
+    parser.add<string>("sortName", 's', "Name of the sort", false, "BucketInsertion");
+    parser.add<unsigned int>("sizeArray", 'n', "Size of the sort array", false, 1000000);
     parser.add<unsigned int>("kMerge", 'k', "k-Merge in MergeSort ", false, 3);
     parser.add<unsigned int>("dHeap", 'd', "d-heap in HeapSort", false, 3);
-    parser.add<double>("denominator", 'b', "Number of bucket in BucketSort = size/denominator, its a denominator", false, 32);
+    parser.add<double>("denominator", 'b', "Number of bucket in BucketSort = size/denominator, its a denominator", false, 256);
     parser.add<double>("lb", 'l', "Left border", false, 0);
-    parser.add<double>("rb", 'r', "Right border", false, 10);
-    parser.add<string>("distribution", 't', "Type of distribution: uniform, normal", false, "uniform");
+    parser.add<double>("rb", 'r', "Right border", false, 2147483646);
+    parser.add<string>("distribution", 't', "Type of distribution: uniform, normal", false, "normal");
 }
 
 template <typename Type>
 void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>& sortMethod, unsigned int size, double lb, double rb, string distribution) {
     vector<Type> array(size);
-    gen.FillVector(array, lb, rb);
+    gen.FillVector(array, lb, rb, distribution);
     cout << "\n\tRandom array:" << endl;
     PrintVector<Type>(array);
     vector<Type> sort_array = sortMethod.Sort(array);
