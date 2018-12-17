@@ -3,7 +3,6 @@
 ![](all_metods.png)
 ![](all_metods_crop.png)
 
-<center>
 **Таблица с лучшими сортировками для каждого типа данных**
 
 int32         	| int64          | float         	| double          |
@@ -11,7 +10,6 @@ int32         	| int64          | float         	| double          |
 Radix		  	| Radix		     | BucketStandart   | Standart		  |
 BucketStandart  | BucketStandart | Standart		  	| BucketStandart  |
 Standart	  	| Standart	     | Quick		  	| QuickLomuto	  |
-</center>
 
 # Оптимальное значение k для k-MergeSort 
 
