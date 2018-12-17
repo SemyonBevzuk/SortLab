@@ -6,7 +6,7 @@ import sys
 import matplotlib.pyplot as plt
 
 types = ['int32', 'int64', 'double', 'float']
-metods = ['Bubble','BucketInsertion', 'BucketStandart', 'BucketInsertionAdaptiv','Heap', 'Merge', 'Quick', 'QuickLomuto', 'SearchTree', 'Standart', 'Counting']
+metods = ['BucketInsertion', 'BucketInsertionAdaptiv', 'BucketStandart', 'Heap', 'HeapStandart', 'Merge', 'Quick', 'QuickLomuto', 'SearchTree', 'Shell', 'Standart', 'Radix']
 
 def csv_dict_reader(file_obj, type_elemets):
     stats = {}

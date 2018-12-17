@@ -1,9 +1,9 @@
-declare -a size=(100 1000 10000 100000 500000 1000000 2000000 5000000 10000000 100000000)
-declare -a kParams=(2 4 8 10 16)
+declare -a size=(100 1000 10000 100000 500000 1000000 5000000 10000000)
+declare -a kParams=(10 100 500 1000)
 left=0
-right=1000000
+right=2147483646
 
-rm Merge/*.csv
+rm Merge/test*.csv
 for k in "${kParams[@]}"
 do
 	for s in "${size[@]}"

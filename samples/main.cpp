@@ -10,15 +10,19 @@
 #include "cmdline.h"
 #include <fstream>
 #include <type_traits>
+#include <cmath>
 
 using namespace std;
 
 void InitParser(cmdline::parser& parser);
 
 template <typename Type>
-void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>& sortMethod, unsigned int size, double lb, double rb);
+void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>& sortMethod, unsigned int size, double lb, double rb, string distribution);
 
 int main(int argc, char** argv) {
+
+    //cout << 0.5*(1+erf((0-(-2))/sqrt(2*1*1))) << endl;
+
     cmdline::parser parser;
     InitParser(parser);
     parser.parse_check(argc, argv);
@@ -28,16 +32,17 @@ int main(int argc, char** argv) {
     unsigned int sizeArray = parser.get<unsigned int>("sizeArray");
     unsigned int kMerge = parser.get<unsigned int>("kMerge");
     unsigned int dHeap = parser.get<unsigned int>("dHeap");
-    unsigned int numBucket = parser.get<unsigned int>("numBucket");
+    double denominator = parser.get<double>("denominator");
     double lb = parser.get<double>("lb");
     double rb = parser.get<double>("rb");
+    string distribution = parser.get<string>("distribution");
 
     Generators generator;
 
     string title = "";
     if (!IsFileExists(filename))
     {
-        title = "Method,Type,Status,Size,Time\n";
+        title = "Method,Type,Status,Distribution,Size,Time\n";
     }
 
     ofstream myfile;
@@ -45,110 +50,136 @@ int main(int argc, char** argv) {
     myfile << title;
     if (sortName == "Bubble") {
         BubbleSort<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         BubbleSort<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         BubbleSort<float> sort3;
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         BubbleSort<double> sort4;
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "Standart") {
         StandartSort<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         StandartSort<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         StandartSort<float> sort3;
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         StandartSort<double> sort4;
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "Merge") {
         MergeSort<__int32> sort1(kMerge);
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         MergeSort<__int64> sort2(kMerge);
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         MergeSort<float> sort3(kMerge);
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         MergeSort<double> sort4(kMerge);
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "Quick") {
         QuickSort<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         QuickSort<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         QuickSort<float> sort3;
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         QuickSort<double> sort4;
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "QuickLomuto") {
         QuickSortLomuto<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         QuickSortLomuto<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         QuickSortLomuto<float> sort3;
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         QuickSortLomuto<double> sort4;
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "SearchTree") {
         SearchTreeSort<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         SearchTreeSort<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         SearchTreeSort<float> sort3;
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         SearchTreeSort<double> sort4;
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "Heap") {
         HeapSort<__int32> sort1(dHeap);
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         HeapSort<__int64> sort2(dHeap);
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         HeapSort<float> sort3(dHeap);
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         HeapSort<double> sort4(dHeap);
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
+    }
+    if (sortName == "HeapStandart") {
+        HeapStandartSort<__int32> sort1;
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        HeapStandartSort<__int64> sort2;
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+        HeapStandartSort<float> sort3;
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
+        HeapStandartSort<double> sort4;
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "BucketStandart") {
-        BucketStandartSort<__int32> sort1(numBucket);
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
-        BucketStandartSort<__int64> sort2(numBucket);
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
-        BucketStandartSort<float> sort3(numBucket);
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
-        BucketStandartSort<double> sort4(numBucket);
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        BucketStandartSort<__int32> sort1(denominator);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        BucketStandartSort<__int64> sort2(denominator);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+        BucketStandartSort<float> sort3(denominator);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
+        BucketStandartSort<double> sort4(denominator);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "BucketInsertion") {
-        BucketInsertionSort<__int32> sort1(numBucket);
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
-        BucketInsertionSort<__int64> sort2(numBucket);
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
-        BucketInsertionSort<float> sort3(numBucket);
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
-        BucketInsertionSort<double> sort4(numBucket);
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        BucketInsertionSort<__int32> sort1(denominator);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        BucketInsertionSort<__int64> sort2(denominator);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+        BucketInsertionSort<float> sort3(denominator);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
+        BucketInsertionSort<double> sort4(denominator);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "BucketInsertionSortAdaptiv")
     {
         BucketInsertionAdaptivSort<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         BucketInsertionAdaptivSort<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
         BucketInsertionAdaptivSort<float> sort3;
-        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
         BucketInsertionAdaptivSort<double> sort4;
-        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
+    }
+    if (sortName == "Shell") {
+        ShellSort<__int32> sort1;
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        ShellSort<__int64> sort2;
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+        ShellSort<float> sort3;
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
+        ShellSort<double> sort4;
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
     if (sortName == "Counting") {
         CountingSort<__int32> sort1;
-        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         CountingSort<__int64> sort2;
-        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb);
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+    }
+    if (sortName == "Radix") {
+        RadixSort<__int32> sort1;
+        GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        RadixSort<__int64> sort2;
+        GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
     }
     myfile.close();
     return 0;
@@ -156,17 +187,18 @@ int main(int argc, char** argv) {
 
 void InitParser(cmdline::parser& parser) {
     parser.add<string>("outFile", 'f', "Name of the output csv file", false, "test");
-    parser.add<string>("sortName", 's', "Name of the sort", false, "Counting");
+    parser.add<string>("sortName", 's', "Name of the sort", false, "Merge");
     parser.add<unsigned int>("sizeArray", 'n', "Size of the sort array", false, 10);
-    parser.add<unsigned int>("kMerge", 'k', "k-Merge in MergeSort ", false, 5);
+    parser.add<unsigned int>("kMerge", 'k', "k-Merge in MergeSort ", false, 3);
     parser.add<unsigned int>("dHeap", 'd', "d-heap in HeapSort", false, 3);
-    parser.add<unsigned int>("numBucket", 'b', "Number of bucket in BucketSort", false, 100000);
+    parser.add<double>("denominator", 'b', "Number of bucket in BucketSort = size/denominator, its a denominator", false, 32);
     parser.add<double>("lb", 'l', "Left border", false, 0);
-    parser.add<double>("rb", 'r', "Right border", false, 100000);
+    parser.add<double>("rb", 'r', "Right border", false, 10);
+    parser.add<string>("distribution", 't', "Type of distribution: uniform, normal", false, "uniform");
 }
 
 template <typename Type>
-void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>& sortMethod, unsigned int size, double lb, double rb) {
+void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>& sortMethod, unsigned int size, double lb, double rb, string distribution) {
     vector<Type> array(size);
     gen.FillVector(array, lb, rb);
     cout << "\n\tRandom array:" << endl;
@@ -183,7 +215,8 @@ void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>
     if (std::is_same<Type, double>::value) array_type = "double";
     if (std::is_same<Type, float>::value) array_type = "float";
     cout << "Type = " << array_type << endl;
-    cout << "Size = " << size << endl << endl;
+    cout << "Size = " << size << endl;
+    cout << "Distribution = " << distribution << endl << endl;
 
-    file << sortMethod.GetSortName() << "," << array_type << "," << IsVectorsEqual(array, sort_array) << "," << size << "," << sortMethod.GetSortTime() << "\n";
+    file << sortMethod.GetSortName() << "," << array_type << "," << IsVectorsEqual(array, sort_array) << "," << distribution  << ","<< size << "," << sortMethod.GetSortTime() << "\n";
 }

@@ -67,6 +67,23 @@ private:
     }
 
     template <typename Type>
+    void Insertion_sort(vector<Type>& a, size_t left, size_t right) {
+        for (size_t i = left + 1; i <= right; i++)
+        {
+            Type key = a[i];
+            int j = i - 1;
+            while (j >= (int)left && a[j] > key)
+            {
+                a[j + 1] = a[j];
+                j--;
+            }
+            a[j + 1] = key;
+        }
+    }
+
+    vector<Type> buffer;
+
+    template <typename Type>
     void Merge_Sort(vector<Type>& buf, size_t left, size_t right) {
         if ((right - left) > k) {
             size_t middle = left + (right - left) / 2;
@@ -76,31 +93,49 @@ private:
             merge(buf, left, right, middle);
         }
         else {
-            BubbleSort(buf, left, right);
+            Insertion_sort(buf, left, right);
         }
     }
 
     template <typename Type>
-    void merge(vector<Type>& buf, size_t left, size_t right, size_t middle) {
-        if (left >= right || middle < left || middle > right) return;
-        if (right == left + 1 && buf[left] > buf[right]) {
-            swap(buf[left], buf[right]);
-            return;
+    void merge(vector<Type>& a, size_t left, size_t right, size_t middle) {
+        size_t left_array_idx = left;
+        size_t right_array_idx = middle+1;
+        size_t tmp_idx = 0;
+        while (left_array_idx <= middle && right_array_idx <= right) {
+            if (a[left_array_idx] < a[right_array_idx])
+                buffer[tmp_idx++] = a[left_array_idx++];
+            else
+                buffer[tmp_idx++] = a[right_array_idx++];
         }
 
-        vector<Type> tmp(&buf[left], &buf[right] + 1);
+        while (right_array_idx <= right)
+            buffer[tmp_idx++] = a[right_array_idx++];
+        while (left_array_idx <= middle)
+            buffer[tmp_idx++] = a[left_array_idx++];
 
-        for (size_t i = left, j = 0, k = middle - left + 1; i <= right; ++i) {
-            if (j > middle - left) {
-                buf[i] = tmp[k++];
-            }
-            else if (k > right - left) {
-                buf[i] = tmp[j++];
-            }
-            else {
-                buf[i] = (tmp[j] < tmp[k]) ? tmp[j++] : tmp[k++];
-            }
-        }
+        for (tmp_idx = 0; tmp_idx < right - left + 1; tmp_idx++)
+            a[left + tmp_idx] = buffer[tmp_idx];
+
+        //if (left >= right || middle < left || middle > right) return;
+        //if (right == left + 1 && buf[left] > buf[right]) {
+        //    swap(buf[left], buf[right]);
+        //    return;
+        //}
+
+        //vector<Type> tmp(&buf[left], &buf[right] + 1);
+
+        //for (size_t i = left, j = 0, k = middle - left + 1; i <= right; ++i) {
+        //    if (j > middle - left) {
+        //        buf[i] = tmp[k++];
+        //    }
+        //    else if (k > right - left) {
+        //        buf[i] = tmp[j++];
+        //    }
+        //    else {
+        //        buf[i] = (tmp[j] < tmp[k]) ? tmp[j++] : tmp[k++];
+        //    }
+        //}
     }
 
 public:
@@ -112,6 +147,7 @@ public:
 
     vector<Type> Sort(const vector<Type>& array_t) {
         double start_time = omp_get_wtime();
+        buffer.resize(array_t.size());
         vector<Type> array_out = array_t; // требует доп память 
         Merge_Sort(array_out, 0, array_out.size() - 1);
         sort_time = omp_get_wtime() - start_time;
@@ -189,7 +225,10 @@ private:
 
     template <typename Type>
     int Partition(vector<Type>& a, int low, int high) {
-        Type pivot = a[high];
+        std::uniform_int_distribution<unsigned int> uid(low, high);
+        unsigned int pivot_idx = uid(gen);
+        Type pivot = a[pivot_idx];
+        swap(a[pivot_idx], a[high]);
         int i = low;
 
         for (int j = low; j < high; j++) {
@@ -268,6 +307,7 @@ private:
     unsigned int Child(unsigned int i, unsigned int index) {
         return (d*i + index + 1);
     }
+
     unsigned int Parent(unsigned int i) {
         return ((i - 1) / d);
     }
@@ -329,14 +369,41 @@ public:
     }
 };
 
+// O(n(log(n)) в среднем, неустойчивая
+template <typename Type>
+class HeapStandartSort : public ISort<Type> {
+private:
+
+    template <typename Type>
+    void HeapSort(vector<Type>& in) {
+        make_heap(in.begin(), in.end());
+        sort_heap(in.begin(), in.end());
+    }
+
+public:
+    string GetSortName() { return "HeapStandart"; };
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out = array_t;
+
+        double start_time = omp_get_wtime();
+        HeapSort(array_out);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
 //  O(n*log_k(n))
 template <typename Type>
 class BucketStandartSort : public ISort<Type> {
 private:
     unsigned int numBuckets;
+    double denominator;
 
     template <typename Type>
     vector<Type> BucketSort(const vector<Type>& a) {
+        numBuckets = ceil(a.size() / denominator);
         vector<Type> res;
         Type minElement = a[0];
         Type maxElement = a[0];
@@ -362,10 +429,10 @@ private:
     }
 
 public:
-    string GetSortName() { return "BucketStandart_" + to_string(numBuckets); };
+    string GetSortName() { return "BucketStandart_" + to_string((int)denominator); };
 
-    BucketStandartSort(unsigned int _numBuckets = 10) {
-        numBuckets = _numBuckets;
+    BucketStandartSort(double _denominator = 10) {
+        denominator = _denominator;
     }
 
     vector<Type> Sort(const vector<Type>& array_t) {
@@ -384,6 +451,7 @@ template <typename Type>
 class BucketInsertionSort : public ISort<Type>  {
 private:
     unsigned int numBuckets;
+    double denominator;
 
     template <typename Type>
     void Insertion_sort(vector<Type>& a) {
@@ -401,6 +469,7 @@ private:
 
     template <typename Type>
     vector<Type> BucketSort(const vector<Type>& a) {
+        numBuckets = ceil(a.size() / denominator);
         vector<Type> res;
         Type minElement = a[0];
         Type maxElement = a[0];
@@ -426,10 +495,10 @@ private:
     }
 
 public:
-    string GetSortName() { return "BucketInsertion_" + to_string(numBuckets); };
+    string GetSortName() { return "BucketInsertion_" + to_string((int)denominator); };
 
-    BucketInsertionSort(unsigned int _numBuckets = 10) {
-        numBuckets = _numBuckets;
+    BucketInsertionSort(double _denominator = 10) {
+        denominator = _denominator;
     }
 
     vector<Type> Sort(const vector<Type>& array_t) {
@@ -465,7 +534,7 @@ private:
 
     template <typename Type>
     vector<Type> BucketSort(const vector<Type>& a) {
-        numBuckets = a.size();
+        numBuckets = sqrt(a.size());
         vector<Type> res;
         Type minElement = a[0];
         Type maxElement = a[0];
@@ -505,7 +574,7 @@ public:
     }
 };
 
-// O(n + k)
+// O(n + k) для целых
 template <typename Type>
 class CountingSort : public ISort<Type> {
 private:
@@ -547,6 +616,130 @@ public:
 
         double start_time = omp_get_wtime();
         array_out = CountSort(array_t);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
+// O(n)
+template <typename Type>
+class RadixSort : public ISort<Type> {
+private:
+
+    template <typename Type>
+    void radixSort(vector<Type>& a) {
+        Type maxElement = a[0];
+        for (size_t i = 0; i < a.size(); i++) {
+            if (a[i]>maxElement) maxElement = a[i];
+        }
+
+        Type number_bits;
+        if (std::is_same<Type, __int32>::value) number_bits = 4;
+        if (std::is_same<Type, __int64>::value) number_bits = 8;
+        Type buckets = (1 << number_bits);
+        int pos = 0;
+        Type mask = buckets - 1;
+
+        Type exp = maxElement >> number_bits*pos;
+        while (exp > 0) {
+            vector<Type> b = a;
+            Type* bucket = new Type[1 << number_bits];
+            for (int i = 0; i < (1 << number_bits); i++) bucket[i] = 0;
+
+            for (int i = 0; i < a.size(); i++)
+                bucket[(a[i] >> (number_bits*pos)) & mask]++;
+
+            for (int i = 1; i < buckets; i++)
+                bucket[i] += bucket[i - 1];
+
+            for (int i = a.size() - 1; i >= 0; i--) {
+                bucket[(a[i] >> (number_bits*pos)) & mask]--;
+                b[bucket[(a[i] >> (number_bits*pos)) & mask]] = a[i];
+            }
+            delete(bucket);
+            for (int i = 0; i < a.size(); i++)
+                a[i] = b[i];
+            exp = exp >> number_bits;
+            pos++;
+        }
+    }
+
+public:
+    string GetSortName() { return "Radix"; };
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out = array_t;
+
+        double start_time = omp_get_wtime();
+        radixSort(array_out);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
+// O(n^(7/6)) формула Седжвика 
+template <typename Type>
+class ShellSort : public ISort<Type> {
+private:
+
+    int increment(long inc[], long size) {
+        // inc[] массив, в который заносятся инкременты
+        // size размерность этого массива
+        int p1, p2, p3, s;
+        p1 = p2 = p3 = 1;
+        s = -1;
+        // заполняем массив элементов по формуле Роберта Седжвика
+        do {
+            if (++s % 2) {
+                inc[s] = 8 * p1 - 6 * p2 + 1;
+            }
+            else {
+                inc[s] = 9 * p1 - 9 * p3 + 1;
+                p2 *= 2;
+                p3 *= 2;
+            }
+            p1 *= 2;
+        // заполняем массив, пока текущая инкремента хотя бы в 3 раза меньше количества элементов в массиве
+        } while (3 * inc[s] < size);
+        return s > 0 ? --s : 0;// возвращаем количество элементов в массиве
+    }
+
+    template <typename Type>
+    void shellSort(vector<Type>& a) {
+        // inc инкремент, расстояние между элементами сравнения
+        // i и j стандартные переменные цикла
+        // seq[40] массив, в котором хранятся инкременты
+        long inc, i, j, seq[40];
+        int s;//количество элементов в массиве seq[40]
+
+        // вычисление последовательности приращений
+        s = increment(seq, a.size());
+
+        while (s >= 0) {
+            //извлекаем из массива очередную инкременту
+            inc = seq[s--];
+            // сортировка вставками с инкрементами inc
+            for (i = inc; i < a.size(); i++) {
+                Type temp = a[i];
+                // сдвигаем элементы до тех пор, пока не дойдем до конца или не упорядочим в нужном порядке
+                for (j = i - inc; (j >= 0) && (a[j] > temp); j -= inc)
+                    a[j + inc] = a[j];
+                // после всех сдвигов ставим на место j+inc элемент, который находился на i месте
+                a[j + inc] = temp;
+            }
+        }
+    }
+
+public:
+    string GetSortName() { return "Shell_Sedgewick"; };
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out = array_t;
+
+        double start_time = omp_get_wtime();
+        shellSort(array_out);
         sort_time = omp_get_wtime() - start_time;
 
         return array_out;

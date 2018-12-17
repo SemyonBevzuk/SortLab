@@ -1,0 +1,17 @@
+Method,Type,Status,Distribution,Size,Time
+Radix,int32,1,uniform,100,1.09704e-005
+Radix,int64,1,uniform,100,1.46273e-005
+Radix,int32,1,uniform,1000,4.16877e-005
+Radix,int64,1,uniform,1000,2.63291e-005
+Radix,int32,1,uniform,10000,0.000650182
+Radix,int64,1,uniform,10000,0.000627875
+Radix,int32,1,uniform,100000,0.00400202
+Radix,int64,1,uniform,100000,0.00653181
+Radix,int32,1,uniform,500000,0.0476608
+Radix,int64,1,uniform,500000,0.040922
+Radix,int32,1,uniform,1000000,0.0663994
+Radix,int64,1,uniform,1000000,0.055339
+Radix,int32,1,uniform,5000000,0.428909
+Radix,int64,1,uniform,5000000,0.319097
+Radix,int32,1,uniform,10000000,0.604611
+Radix,int64,1,uniform,10000000,0.533959

@@ -56,7 +56,7 @@ def plot_sorts(stats, csv_folder, filename_path):
     plt.show()
     
 def main():
-    csv_folders = ['BucketInsertion','BucketStandart','BucketInsertionSortAdaptiv']
+    csv_folders = ['BucketInsertion', 'BucketStandart', 'BucketInsertionAdaptiv']
     filename = "OptimalBucket.png"
     filename_path = filename
     stats = []
