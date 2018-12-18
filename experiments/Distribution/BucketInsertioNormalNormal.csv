@@ -1,0 +1,17 @@
+Method,Type,Status,Distribution,Size,Time
+BucketInsertionNormal_256,float,1,normal,100,4.16877e-005
+BucketInsertionNormal_256,double,1,normal,100,2.92545e-005
+BucketInsertionNormal_256,float,1,normal,1000,0.000270239
+BucketInsertionNormal_256,double,1,normal,1000,0.000191983
+BucketInsertionNormal_256,float,1,normal,10000,0.00108388
+BucketInsertionNormal_256,double,1,normal,10000,0.00127879
+BucketInsertionNormal_256,float,1,normal,100000,0.0122931
+BucketInsertionNormal_256,double,1,normal,100000,0.0161222
+BucketInsertionNormal_256,float,1,normal,500000,0.0651806
+BucketInsertionNormal_256,double,1,normal,500000,0.0816271
+BucketInsertionNormal_256,float,1,normal,1000000,0.129922
+BucketInsertionNormal_256,double,1,normal,1000000,0.142071
+BucketInsertionNormal_256,float,1,normal,5000000,0.760623
+BucketInsertionNormal_256,double,1,normal,5000000,0.791037
+BucketInsertionNormal_256,float,1,normal,10000000,2.02689
+BucketInsertionNormal_256,double,1,normal,10000000,3.13756

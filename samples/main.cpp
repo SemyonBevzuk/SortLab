@@ -20,9 +20,6 @@ template <typename Type>
 void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>& sortMethod, unsigned int size, double lb, double rb, string distribution);
 
 int main(int argc, char** argv) {
-
-    //cout << 0.5*(1+erf((0-(-2))/sqrt(2*1*1))) << endl;
-
     cmdline::parser parser;
     InitParser(parser);
     parser.parse_check(argc, argv);
@@ -40,8 +37,7 @@ int main(int argc, char** argv) {
     Generators generator;
 
     string title = "";
-    if (!IsFileExists(filename))
-    {
+    if (!IsFileExists(filename)) {
         title = "Method,Type,Status,Distribution,Size,Time\n";
     }
 
@@ -138,6 +134,18 @@ int main(int argc, char** argv) {
         BucketStandartSort<double> sort4(denominator);
         GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
+    if (sortName == "BucketStandartNormal") {
+        double mean = (lb + (rb - lb) / 2.0);
+        double sigma = (rb - lb) / 100.0;
+        //BucketStandartNormalSort<__int32> sort1(mean, sigma, denominator);
+        //GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        //BucketStandartNormalSort<__int64> sort2(mean, sigma, denominator);
+        //GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+        BucketStandartNormalSort<float> sort3(mean, sigma, denominator);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
+        BucketStandartNormalSort<double> sort4(mean, sigma, denominator);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
+    }
     if (sortName == "BucketInsertion") {
         BucketInsertionSort<__int32> sort1(denominator);
         GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
@@ -148,8 +156,19 @@ int main(int argc, char** argv) {
         BucketInsertionSort<double> sort4(denominator);
         GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
     }
-    if (sortName == "BucketInsertionSortAdaptiv")
-    {
+    if (sortName == "BucketInsertioNormal") {
+        double mean = (lb + (rb - lb) / 2.0);
+        double sigma = (rb - lb) / 100.0;
+        //BucketInsertioNormalnSort<__int32> sort1(mean, sigma, denominator);
+        //GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
+        //BucketInsertioNormalnSort<__int64> sort2(mean, sigma, denominator);
+        //GenerateVectorSortAndSaveStats<__int64>(myfile, generator, sort2, sizeArray, lb, rb, distribution);
+        BucketInsertioNormalnSort<float> sort3(mean, sigma, denominator);
+        GenerateVectorSortAndSaveStats<float>(myfile, generator, sort3, sizeArray, lb, rb, distribution);
+        BucketInsertioNormalnSort<double> sort4(mean, sigma, denominator);
+        GenerateVectorSortAndSaveStats<double>(myfile, generator, sort4, sizeArray, lb, rb, distribution);
+    }
+    if (sortName == "BucketInsertionSortAdaptiv") {
         BucketInsertionAdaptivSort<__int32> sort1;
         GenerateVectorSortAndSaveStats<__int32>(myfile, generator, sort1, sizeArray, lb, rb, distribution);
         BucketInsertionAdaptivSort<__int64> sort2;
@@ -187,13 +206,13 @@ int main(int argc, char** argv) {
 
 void InitParser(cmdline::parser& parser) {
     parser.add<string>("outFile", 'f', "Name of the output csv file", false, "test");
-    parser.add<string>("sortName", 's', "Name of the sort", false, "BucketInsertion");
-    parser.add<unsigned int>("sizeArray", 'n', "Size of the sort array", false, 1000000);
+    parser.add<string>("sortName", 's', "Name of the sort", false, "BucketStandartNormal");
+    parser.add<unsigned int>("sizeArray", 'n', "Size of the sort array", false, 1000);
     parser.add<unsigned int>("kMerge", 'k', "k-Merge in MergeSort ", false, 3);
     parser.add<unsigned int>("dHeap", 'd', "d-heap in HeapSort", false, 3);
-    parser.add<double>("denominator", 'b', "Number of bucket in BucketSort = size/denominator, its a denominator", false, 256);
+    parser.add<double>("denominator", 'b', "Number of bucket in BucketSort = size/denominator, its a denominator", false, 100);
     parser.add<double>("lb", 'l', "Left border", false, 0);
-    parser.add<double>("rb", 'r', "Right border", false, 2147483646);
+    parser.add<double>("rb", 'r', "Right border", false, 10);
     parser.add<string>("distribution", 't', "Type of distribution: uniform, normal", false, "normal");
 }
 
@@ -218,5 +237,5 @@ void GenerateVectorSortAndSaveStats(ofstream& file, Generators& gen, ISort<Type>
     cout << "Size = " << size << endl;
     cout << "Distribution = " << distribution << endl << endl;
 
-    file << sortMethod.GetSortName() << "," << array_type << "," << IsVectorsEqual(array, sort_array) << "," << distribution  << ","<< size << "," << sortMethod.GetSortTime() << "\n";
+    file << sortMethod.GetSortName() << "," << array_type << "," << IsVectorsEqual(array, sort_array) << "," << distribution << "," << size << "," << sortMethod.GetSortTime() << "\n";
 }

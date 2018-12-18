@@ -8,6 +8,7 @@
 #include <random>  
 #include <ctime>
 #include <string>
+#include <amp_math.h>
 
 using namespace std;
 
@@ -446,6 +447,61 @@ public:
     }
 };
 
+//  O(n*log_k(n))
+template <typename Type>
+class BucketStandartNormalSort : public ISort<Type> {
+private:
+    unsigned int numBuckets;
+    double denominator;
+    Type mean;
+    Type sigma;
+
+    template <typename Type>
+    Type DistributionFunction(Type x)
+    {
+        return 0.5*(1 + erf((x-mean)/(sqrt(2)*sigma)));
+    }
+
+    template <typename Type>
+    vector<Type> BucketSort(const vector<Type>& a) {
+        numBuckets = ceil(a.size() / denominator);
+        vector<Type> res;
+        vector<vector<Type>> buckets(numBuckets, vector<Type>());
+        for (unsigned int i = 0; i < a.size(); i++) {
+            unsigned int index = floor(DistributionFunction(a[i])*(numBuckets));
+            buckets[index].push_back(a[i]);
+        }
+        for (unsigned int i = 0; i < buckets.size(); i++) {
+            sort(buckets[i].begin(), buckets[i].end());
+        }
+        for (unsigned int i = 0; i < buckets.size(); i++) {
+            for (unsigned int j = 0; j < buckets[i].size(); j++) {
+                res.push_back(buckets[i][j]);
+            }
+        }
+        return res;
+    }
+
+public:
+    string GetSortName() { return "BucketStandartNormal_" + to_string((int)denominator); };
+
+    BucketStandartNormalSort(Type _mean, Type _sigma, double _denominator = 10) {
+        mean = _mean;
+        sigma = _sigma;
+        denominator = _denominator;
+    }
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out;
+
+        double start_time = omp_get_wtime();
+        array_out = BucketSort(array_t);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
 // O(n*log_k(n))
 template <typename Type>
 class BucketInsertionSort : public ISort<Type>  {
@@ -498,6 +554,74 @@ public:
     string GetSortName() { return "BucketInsertion_" + to_string((int)denominator); };
 
     BucketInsertionSort(double _denominator = 10) {
+        denominator = _denominator;
+    }
+
+    vector<Type> Sort(const vector<Type>& array_t) {
+        vector<Type> array_out;
+
+        double start_time = omp_get_wtime();
+        array_out = BucketSort(array_t);
+        sort_time = omp_get_wtime() - start_time;
+
+        return array_out;
+    }
+};
+
+// O(n*log_k(n))
+template <typename Type>
+class BucketInsertioNormalnSort : public ISort<Type> {
+private:
+    unsigned int numBuckets;
+    double denominator;
+    Type mean;
+    Type sigma;
+
+    template <typename Type>
+    Type DistributionFunction(Type x) {
+        return 0.5*(1 + erf((x - mean) / (sqrt(2)*sigma)));
+    }
+
+    template <typename Type>
+    void Insertion_sort(vector<Type>& a) {
+        unsigned int n = a.size();
+        for (int i = 1; i<n; i++) {
+            Type key = a[i];
+            int j = i - 1;
+            while (j >= 0 && a[j]>key) {
+                a[j + 1] = a[j];
+                j--;
+            }
+            a[j + 1] = key;
+        }
+    }
+
+    template <typename Type>
+    vector<Type> BucketSort(const vector<Type>& a) {
+        numBuckets = ceil(a.size() / denominator);
+        vector<Type> res;
+        vector<vector<Type>> buckets(numBuckets, vector<Type>());
+        for (unsigned int i = 0; i < a.size(); i++) {
+            unsigned int index = floor(DistributionFunction(a[i])*(numBuckets));
+            buckets[index].push_back(a[i]);
+        }
+        for (unsigned int i = 0; i < buckets.size(); i++) {
+            Insertion_sort(buckets[i]);
+        }
+        for (unsigned int i = 0; i < buckets.size(); i++) {
+            for (unsigned int j = 0; j < buckets[i].size(); j++) {
+                res.push_back(buckets[i][j]);
+            }
+        }
+        return res;
+    }
+
+public:
+    string GetSortName() { return "BucketInsertionNormal_" + to_string((int)denominator); };
+
+    BucketInsertioNormalnSort(Type _mean, Type _sigma, double _denominator = 10) {
+        mean = _mean;
+        sigma = _sigma;
         denominator = _denominator;
     }
 

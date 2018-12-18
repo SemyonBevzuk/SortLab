@@ -30,9 +30,9 @@ public:
 
     void FillVector(std::vector<double>& array, const double a = 0, const double b = 1, std::string distribution = "uniform") {
         std::uniform_real_distribution<double> urd(a, b);
-        double var = (a + (b - a) / 2.0);
+        double mean = (a + (b - a) / 2.0);
         double sigma = (b - a) / 100.0;
-        std::normal_distribution<double> nd(var, sigma);
+        std::normal_distribution<double> nd(mean, sigma);
         for (unsigned int i = 0; i < array.size(); i++) {
             if (distribution == "uniform")
                 array[i] = (urd(gen64));
@@ -44,9 +44,9 @@ public:
 
     void FillVector(std::vector<float>& array, const float a = 0, const float b = 1, std::string distribution = "uniform") {
         std::uniform_real_distribution<float> urd(a, b);
-        float var = (a + (b - a) / 2.0);
+        float mean = (a + (b - a) / 2.0);
         float sigma = (b - a) / 100.0;
-        std::normal_distribution<float> nd(var, sigma);
+        std::normal_distribution<float> nd(mean, sigma);
         for (unsigned int i = 0; i < array.size(); i++) {
             if (distribution == "uniform")
                 array[i] = (urd(gen32));
