@@ -12,20 +12,22 @@
 - **utilities.h** - содержит вспомогательный функции (печать, наличие файла в директории, сравнение двух массивов)
 
 # Реализованные сортировки в sorts.h
-- BubbleSort
-- StandartSort на основе std::sort()
-- k-MergeSort с сортировкой вставками
-- QuickSort с разбиением Хоара и устранением хвостовой рекурсии
-- QuickSort с разбиением Ломуто и устранением хвостовой рекурсии
-- SearchTreeSort на основе multiset
-- d-HeapSort
-- HeapSort на основе make_heap
-- BucketStandartSort (число карманов = размер/параметр)
-- BucketInsertionSort (число карманов = размер/параметр)
-- BucketInsertionAdaptivSort (число карманов = sqrt(размер))
-- CountingSort только для int32 и int64
-- RadixSort только для int32 и int64
-- ShellSort с формулой Седжвика
+- **BubbleSort**
+- **StandartSort** на основе std::sort()
+- **k-MergeSort** с сортировкой вставками массивов длины k
+- **QuickSort** с разбиением Хоара и устранением хвостовой рекурсии
+- **QuickSort** с разбиением Ломуто и устранением хвостовой рекурсии
+- **SearchTreeSort** на основе multiset
+- **d-HeapSort** где d есть число потомков для узла
+- **HeapSort** на основе make_heap
+- **BucketStandartSort** с сортировкой карманов std::sort() (число карманов = размер/параметр)
+- **BucketInsertionSort** с сортировкой карманов вставками (число карманов = размер/параметр)
+- **BucketStandartNormalSort** адаптация для нормально распределённых данных (число карманов = размер/параметр)
+- **BucketInsertionNormalSort** адаптация для нормально распределённых данных (число карманов = размер/параметр)
+- **BucketInsertionAdaptivSort** (число карманов = sqrt(размер))
+- **CountingSort** только для int32 и int64
+- **RadixSort** только для int32 и int64
+- **ShellSort** с формулой Седжвика
 
 # Реализованные генераторы в generator.h
 - Генератор чисел *int32* в диапазоне от *a* до *b* с равномерным распределением 
